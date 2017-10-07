@@ -12,8 +12,11 @@ it's completly written in Kotlin Language
 Example:
 
 ```kotlin
+
 // Create one instance 
- RxDownloader
+
+fun downloader():Unit{
+ rxDownloader = RxDownloader
                 .Builder(applicationContext)
                 .addFile("http://reactivex.io/assets/Rx_Logo_S.png")
                 .build();
@@ -26,6 +29,8 @@ Example:
                         Log.d(TAG, "File in position: ${index} is ${fileContainer}")
                     }
                 });
+}
+
 ```
 
 # Hanling Progress & Error Events
