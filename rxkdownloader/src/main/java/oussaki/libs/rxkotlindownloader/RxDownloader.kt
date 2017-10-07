@@ -463,8 +463,7 @@ class RxDownloader(
          */
         fun addFile(url: String): Builder {
             if (isUrl(url)) {
-                val name = ExtractNameAndExtension(url)
-                files.add(FileContainer(url = url, filename = name))
+                files.add(FileContainer(url = url, filename = ExtractNameAndExtension(url)))
             }
             return this
         }
@@ -488,10 +487,7 @@ class RxDownloader(
          * @return Builder
          */
         fun addFiles(urls: List<String>): Builder {
-            for (url in urls) {
-                val newFileContainer = FileContainer(url, ExtractNameAndExtension(url))
-                this.files.add(newFileContainer)
-            }
+            urls.forEach { files.add(FileContainer(it, ExtractNameAndExtension(it))) }
             return this
         }
 
