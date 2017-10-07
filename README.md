@@ -151,7 +151,7 @@ Add the dependency to your `build.gradle`:
 
 ```groovy
 dependencies {
-    compile 'com.github.oussaki:RxDownloader:0.1'
+    compile 'com.github.oussaki:RxKotlinDownloader:0.1'
 }
 ```
 
