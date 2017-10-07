@@ -5,23 +5,19 @@ android:
     # Update tools and then platform-tools explicitly so lint gets an updated database. Can be removed once 3.0 is out.
     - tools
     - platform-tools
+    - android-26
 
 jdk:
   - oraclejdk8
-
-install: ./gradlew clean assemble assembleAndroidTest --stacktrace
 
 notifications:
   email: false
 
 sudo: false
 
-before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-
 cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
     - $HOME/.android/build-cache
+    - $HOME/.gradle/native      #Cache library downloaded from the gradle dependency
