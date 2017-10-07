@@ -15,6 +15,9 @@ notifications:
 
 sudo: false
 
+before_install:
+ - chmod +x gradlew
+
 cache:
   directories:
     - $HOME/.gradle/caches/
