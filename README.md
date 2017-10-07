@@ -11,7 +11,7 @@ it's completly written in Kotlin Language
 
 Example:
 
-```java
+```kotlin
 // Create one instance 
  RxDownloader
                 .Builder(applicationContext)
@@ -40,7 +40,7 @@ There is 5 Events you can use in this library:
 
 * Example:
 
-```java
+```kotlin
  RxDownloader
                 .Builder(applicationContext)
                 .addFile("http://reactivex.io/assets/Rx_Logo_S.png")
@@ -80,7 +80,7 @@ There is 5 Events you can use in this library:
 # Options :
 
 * Customize OkHttpClient  
-```java
+```kotlin
 	 var ok:OkHttpClient = OkHttpClient.Builder().connectTimeout(6,TimeUnit.SECONDS).build();
      RxDownloader
                 .Builder(context)
@@ -103,7 +103,7 @@ There is 5 Events you can use in this library:
   
   	-MAX Strategy: will try to download all the files in case of errors it's will continue till the end.
 
-```java
+```kotlin
  	 RxDownloader
                 .Builder(context)
                 .strategy(DownloadStrategy.MAX)
@@ -114,7 +114,7 @@ There is 5 Events you can use in this library:
     
     -ALL Strategy: will try to download all the files but if it encountered an error it's will stop immediately.
 
-```java
+```kotlin
 	RxDownloader
                 .Builder(context)
                 .strategy(DownloadStrategy.ALL)
@@ -122,7 +122,7 @@ There is 5 Events you can use in this library:
 
 Sometimes you want your files to be in a certain order, for that you can achieve that by calling the `Order` Method in `Builder` this way:
 
-  ```java 
+  ```kotlin 
   .Order(DownloadStrategy.FLAG_SEQUENTIAL)
   ```
 
