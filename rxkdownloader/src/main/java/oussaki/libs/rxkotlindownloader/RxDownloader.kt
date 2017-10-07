@@ -43,7 +43,7 @@ class RxDownloader{
     private var onProgress: OnProgress? = null
     private lateinit var files: MutableList<FileContainer>
 
-    constructor( builder: Builder){
+    private constructor( builder: Builder){
         this.context = builder.context
         this.client = builder.client
         this.STRATEGY = builder.STRATEGY

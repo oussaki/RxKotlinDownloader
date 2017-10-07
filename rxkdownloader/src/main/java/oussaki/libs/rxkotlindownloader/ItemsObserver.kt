@@ -44,9 +44,7 @@ class ItemsObserver(internal var rxStorage: RxStorage?) : Observer<FileContainer
     override fun onSubscribe(d: Disposable) {
         filesContainer = ArrayList()
         // UI interaction and initialization
-        if (onStart != null)
-            onStart!!.run()
-
+        onStart?.run()
         Log.d(TAG, "ItemsObserver onSubscribe")
     }
 
@@ -54,16 +52,10 @@ class ItemsObserver(internal var rxStorage: RxStorage?) : Observer<FileContainer
         Log.e(TAG, "Im inside on next")
         if (fileContainer.isSucceed) {
             try {
-                if (rxStorage != null) {
-                    rxStorage!!.saveToFile(fileContainer.bytes, fileContainer.file) // save file
-                    Log.d(TAG, " First onNext value : " + fileContainer.file.getName())
-                    filesContainer.add(fileContainer)
-
-                    if (onProgress != null)
-                        onProgress!!.run(fileContainer.progress)
-                } else {
-                    onError(IllegalStateException("RxStorage is not initialized"))
-                }
+                rxStorage?.saveToFile(fileContainer?.bytes, fileContainer?.file) // save file
+                Log.d(TAG, " First onNext value : " + fileContainer?.file.getName())
+                filesContainer?.add(fileContainer)
+                onProgress?.run(fileContainer.progress)
             } catch (e: IOException) {
                 onError(IllegalStateException("Can't not save file:" + fileContainer.file.getName()))
             }
@@ -73,24 +65,21 @@ class ItemsObserver(internal var rxStorage: RxStorage?) : Observer<FileContainer
     }
 
     override fun onError(e: Throwable) {
-        Log.d(TAG, " ItemObserver onError : " + e!!.message)
+        Log.d(TAG, " ItemObserver onError : " + e?.message)
         if (e != null)
-            if (this.mOError != null)
-                this.mOError!!.run(e)
+            this.mOError?.run(e)
     }
 
     fun CompleteWithError() {
         // TO-DO
-        if (onCompleteWithError != null)
-            onCompleteWithError!!.run()
+        onCompleteWithError?.run()
         Log.d(TAG, "Download end-up with error")
         onComplete()
     }
 
     fun CompleteWithSuccess() {
         // TO-DO
-        if (onCompleteWithSuccess != null)
-            onCompleteWithSuccess!!.run()
+        onCompleteWithSuccess?.run()
         Log.d(TAG, "Download Complete with success")
         onComplete()
     }
