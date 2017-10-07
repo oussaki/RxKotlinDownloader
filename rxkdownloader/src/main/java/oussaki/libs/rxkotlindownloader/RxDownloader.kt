@@ -19,9 +19,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by oussama abdallah , AKA oussaki on 10/5/2017 , 3:28 PM.
  */
-class RxDownloader(
-        var builder: Builder
-) {
+class RxDownloader{
     val TAG: String = "RxDownloader"
     private var canceled: Boolean = false
     var ORDER: Int = DownloadStrategy.FLAG_PARALLEL
@@ -44,6 +42,19 @@ class RxDownloader(
     private var onCompleteWithError: OnCompleteWithError? = null
     private var onProgress: OnProgress? = null
     private lateinit var files: MutableList<FileContainer>
+
+    constructor( builder: Builder){
+        this.context = builder.context
+        this.client = builder.client
+        this.STRATEGY = builder.STRATEGY
+        this.files = ArrayList(builder.files.size)
+        this.files.addAll(builder.files)
+        this.STORAGE = builder.STORAGE
+        this.subject = ReplaySubject.create()
+        this.rxStorage = builder.rxStorage
+        this.itemsObserver = ItemsObserver(rxStorage)
+        this.ORDER = builder.ORDER
+    }
 
     /**
      * Action to be taken when error thrown for one single file
