@@ -45,15 +45,15 @@ class ItemsObserver(internal var rxStorage: RxStorage?) : Observer<FileContainer
         filesContainer = ArrayList()
         // UI interaction and initialization
         onStart?.run()
-        Log.d(TAG, "ItemsObserver onSubscribe")
+//        Log.d(TAG, "ItemsObserver onSubscribe")
     }
 
     override fun onNext(fileContainer: FileContainer) {
-        Log.e(TAG, "Im inside on next")
+//        Log.e(TAG, "Im inside on next")
         if (fileContainer.isSucceed) {
             try {
                 rxStorage?.saveToFile(fileContainer?.bytes, fileContainer?.file) // save file
-                Log.d(TAG, " First onNext value : " + fileContainer?.file.getName())
+//                Log.d(TAG, " First onNext value : " + fileContainer?.file.getName())
                 filesContainer?.add(fileContainer)
                 onProgress?.run(fileContainer.progress)
             } catch (e: IOException) {
@@ -65,22 +65,19 @@ class ItemsObserver(internal var rxStorage: RxStorage?) : Observer<FileContainer
     }
 
     override fun onError(e: Throwable) {
-        Log.d(TAG, " ItemObserver onError : " + e?.message)
-        if (e != null)
-            this.mOError?.run(e)
+//        Log.d(TAG, " ItemObserver onError : " + e?.message)
+        this.mOError?.run(e)
     }
 
     fun CompleteWithError() {
-        // TO-DO
         onCompleteWithError?.run()
-        Log.d(TAG, "Download end-up with error")
+//        Log.d(TAG, "Download end-up with error")
         onComplete()
     }
 
     fun CompleteWithSuccess() {
-        // TO-DO
         onCompleteWithSuccess?.run()
-        Log.d(TAG, "Download Complete with success")
+//        Log.d(TAG, "Download Complete with success")
         onComplete()
     }
 

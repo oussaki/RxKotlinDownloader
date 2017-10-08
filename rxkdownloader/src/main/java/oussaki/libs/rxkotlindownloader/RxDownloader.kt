@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by oussama abdallah , AKA oussaki on 10/5/2017 , 3:28 PM.
  */
-class RxDownloader{
+class RxDownloader {
     val TAG: String = "RxDownloader"
     private var canceled: Boolean = false
     var ORDER: Int = DownloadStrategy.FLAG_PARALLEL
@@ -27,23 +27,23 @@ class RxDownloader{
     private var size: Int = 0
     private var remains: Int = 0
     private var downloaded: Int = 0
-    lateinit var context: Context
-    lateinit var client: OkHttpClient
-    lateinit var STORAGE: File
+    var context: Context
+    var client: OkHttpClient
+    var STORAGE: File
     var STRATEGY: Int = DownloadStrategy.DEFAULT
 
-    lateinit private var subject: ReplaySubject<FileContainer>
-    private lateinit var itemsObserver: ItemsObserver
-    private lateinit var rxStorage: RxStorage
+    private var subject: ReplaySubject<FileContainer>
+    private var itemsObserver: ItemsObserver
+    private var rxStorage: RxStorage
     /* Actions */
     private var onStart: OnStart? = null
     private var onError: OnError? = null
     private var onCompleteWithSuccess: OnCompleteWithSuccess? = null
     private var onCompleteWithError: OnCompleteWithError? = null
     private var onProgress: OnProgress? = null
-    private lateinit var files: MutableList<FileContainer>
+    private var files: MutableList<FileContainer>
 
-    private constructor( builder: Builder){
+    private constructor(builder: Builder) {
         this.context = builder.context
         this.client = builder.client
         this.STRATEGY = builder.STRATEGY
@@ -156,12 +156,12 @@ class RxDownloader{
      */
     internal fun produceFileContainerFromBytes(bytes: ByteArray, emptyContainer: FileContainer): FileContainer {
         current_thread()
-        Log.d(TAG, "fileContainer success" + emptyContainer.isSucceed)
+//        Log.d(TAG, "fileContainer success" + emptyContainer.isSucceed)
         if (canceled && emptyContainer.isSucceed) {
             /*
             * Canceled file want be considered as downloaded files ( Ignored )
             * */
-            Log.d(TAG, "emptyContainer.setCanceled")
+//            Log.d(TAG, "emptyContainer.setCanceled")
             emptyContainer.isCanceled = true // to help filtration in ALL Strategy
         } else if (emptyContainer.isSucceed && !canceled) {
             val filename = emptyContainer.filename
@@ -174,7 +174,7 @@ class RxDownloader{
             emptyContainer.progress = progress;
             emptyContainer.file = file;
         }
-        Log.e(TAG, "Empty container return")
+//        Log.e(TAG, "Empty container return")
         return emptyContainer
     }
 
@@ -182,18 +182,16 @@ class RxDownloader{
      * @param fileContainer
      */
     private fun publishContainer(fileContainer: FileContainer) {
-        current_thread()
         if (fileContainer.isSucceed)
             subject.onNext(fileContainer)
 
-        Log.e(TAG, "publishContainer on next subject")
+//        Log.e(TAG, "publishContainer on next subject")
         if (remains == 0) {
             if (errors == 0)
                 this.itemsObserver.CompleteWithSuccess()
             else
                 this.itemsObserver.CompleteWithError()
-            Log.i(TAG, remains.toString() + " i will throw on complete")
-            //          subject.onCompleteWithSuccess(); // it was like this
+//            Log.i(TAG, remains.toString() + " i will throw on complete")
         }
     }
 
@@ -202,7 +200,7 @@ class RxDownloader{
      */
     private fun catchCanceling(bytes: ByteArray) {
         // cancel only if the strategy is ALL strategy
-        Log.d(TAG, "catchCanceling  " + (bytes.size == 1 && STRATEGY == DownloadStrategy.ALL))
+//        Log.d(TAG, "catchCanceling  " + (bytes.size == 1 && STRATEGY == DownloadStrategy.ALL))
         if (bytes.size == 1 && STRATEGY == DownloadStrategy.ALL)
             canceled = true
     }
@@ -215,12 +213,10 @@ class RxDownloader{
         if (bytes.size == 1) {
             errors++
             fileContainer.isSucceed = false
-
         } else {
             downloaded++ // this variable is only for testing
             fileContainer.isSucceed = true
         }
-
         remains--
     }
 
@@ -245,10 +241,7 @@ class RxDownloader{
         var observable = Observable
                 .fromCallable({ downloadFile(fileContainer.url) })
                 .onErrorReturn({ throwable ->
-                    Log.e(TAG, "throwable")
-                    val b = ByteArray(1)
-                    Log.e(TAG, "b.length:" + b.size)
-                    b
+                    ByteArray(1)
                 })
                 .subscribeOn(Schedulers.io())
                 .doOnNext({ bytes -> catchDownloadError(bytes, fileContainer) })
@@ -264,11 +257,6 @@ class RxDownloader{
 
         return observable.doOnNext({ fileContainerOnNext -> publishContainer(fileContainerOnNext) })
                 .filter({ fileContainer1 -> fileContainer1.isSucceed && !fileContainer1.isCanceled })
-                .filter({ fileContainer1 ->
-                    Log.d(TAG, "Filter 2" + fileContainer1.isCanceled)
-                    //                    if(canceled && )
-                    true
-                })
     }
 
     /**
@@ -280,11 +268,11 @@ class RxDownloader{
         Log.d(TAG, "Going to use max strategy")
         return observable
                 .doOnError({ throwable ->
-                    Log.d(TAG, "doOnError")
+                    // Log.d(TAG, "doOnError")
                     this.itemsObserver.onError(throwable)
                 })
-                .onErrorReturn({ error ->
-                    Log.d(TAG, "onErrorReturn")
+                .onErrorReturn({ _ ->
+                    // Log.d(TAG, "onErrorReturn")
                     fileContainer
                 })
     }
@@ -294,21 +282,18 @@ class RxDownloader{
      * @return
      */
     private fun allStrategy(observable: Observable<FileContainer>): Observable<FileContainer> {
-        Log.d(TAG, "Going to use all strategy")
+        //  Log.d(TAG, "Going to use all strategy")
         return observable
                 .doOnError({ throwable ->
-                    Log.d(TAG, "doOnError")
+                    //   Log.d(TAG, "doOnError")
                     this.itemsObserver.onError(throwable)
                 })
                 .onErrorResumeNext { observer: Observer<in FileContainer> ->
-                    Log.d(TAG, "onErrorResumeNext all strategy")
+                    // Log.d(TAG, "onErrorResumeNext all strategy")
                     observer.onComplete()
                     subject.onComplete()
                     this.itemsObserver.CompleteWithError()
                 }
-//                .onErrorResumeNext({ throwable ->
-//
-//                })
     }
 
     /**
@@ -369,7 +354,7 @@ class RxDownloader{
         internal var STORAGE: File
         internal var rxStorage: RxStorage
         /**
-         * HashMap of files to be downloaded
+         * List of url to be downloaded
          */
         internal var files: MutableList<FileContainer>
 
@@ -382,7 +367,7 @@ class RxDownloader{
             files = ArrayList<FileContainer>()
             this.STORAGE = context.cacheDir
             this.rxStorage = RxStorage(context)
-            Log.i("RxDownloader", "Builder Constructor called")
+            //  Log.i("RxDownloader", "Builder Constructor called")
         }
 
 
@@ -432,12 +417,9 @@ class RxDownloader{
          * @return Builder
          */
         fun addFile(newName: String, url: String): Builder {
-            if (isUrl(url)) {
-                var extesion = ""
-                if (newName.indexOf(".") < 0)
-                    extesion = ExtractExtension(url)
-                files.add(FileContainer(url, newName + extesion))
-            }
+            if (isUrl(url) && newName.indexOf(".") < 0)
+                files.add(FileContainer(url, newName + ExtractExtension(url)))
+
             return this
         }
 
@@ -473,9 +455,9 @@ class RxDownloader{
          * @return Builder
          */
         fun addFile(url: String): Builder {
-            if (isUrl(url)) {
+            if (isUrl(url))
                 files.add(FileContainer(url = url, filename = ExtractNameAndExtension(url)))
-            }
+
             return this
         }
 
