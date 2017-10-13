@@ -44,9 +44,10 @@ class Main : AppCompatActivity() {
                 .Builder(applicationContext)
                 .addFile("http://reactivex.io/assets/Rx_Logo_S.png")
                 .build()
+                .OnProgress { progress ->  progressBar.progress = progress }
                 .doOnProgress(action = object : OnProgress {
                     override fun run(progress: Int) {
-                        progressBar.progress = progress
+
                     }
                 })
                 .doOnStart(action = object : OnStart {

@@ -43,6 +43,10 @@ class RxDownloader {
     private var onProgress: OnProgress? = null
     private var files: MutableList<FileContainer>
 
+    fun OnProgress(predicate: (progress: Int) -> Unit): RxDownloader {
+        return this
+    }
+
     private constructor(builder: Builder) {
         this.context = builder.context
         this.client = builder.client
