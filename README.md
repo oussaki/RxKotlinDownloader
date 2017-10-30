@@ -50,31 +50,21 @@ There is 5 Events you can use in this library:
                 .Builder(applicationContext)
                 .addFile("http://reactivex.io/assets/Rx_Logo_S.png")
                 .build()
-                .doOnProgress(action = object : OnProgress {
-                    override fun run(progress: Int) {
-                        progressBar.progress = progress
-                    }
+                .doOnProgress({ progress ->
+                    // do something useful here
                 })
-                .doOnStart(action = object : OnStart {
-                    override fun run() {
-                        // do something useful here
-                    }
+                .doOnStart({
+                    // do something useful here
                 })
-                .doOnEachSingleError(action = object : OnError {
-                    override fun run(e: Throwable) {
-                        // do something useful here also :D
+                .doOnEachSingleError({ e: Throwable ->
+                    // do something useful here also:D
 
-                    }
                 })
-                .doOnCompleteWithError(action = object : OnCompleteWithError {
-                    override fun run() {
-                        // TODO("not implemented")
-                    }
+                .doOnCompleteWithError({
+
                 })
-                .doOnCompleteWithSuccess(action = object : OnCompleteWithSuccess {
-                    override fun run() {
-                        txtStatus.text = "Downloading ended successfully"
-                    }
+                .doOnCompleteWithSuccess({
+
                 })
                 .asList()
                 .subscribe({ files, error ->
