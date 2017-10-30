@@ -1,6 +1,5 @@
 package oussaki.libs.rxkotlindownloader
 
-import android.util.Log
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
 import java.io.IOException
@@ -14,29 +13,31 @@ class ItemsObserver(internal var rxStorage: RxStorage?) : Observer<FileContainer
 
     internal lateinit var filesContainer: MutableList<FileContainer>
     internal var TAG = "ItemsObserver"
-    internal var onStart: OnStart? = null
-    internal var mOError: OnError? = null
-    internal var onCompleteWithSuccess: OnCompleteWithSuccess? = null
-    internal var onCompleteWithError: OnCompleteWithError? = null
-    internal var onProgress: OnProgress? = null
 
-    fun onStart(onStart: OnStart) {
+    internal lateinit var onStart: () -> Unit
+    internal lateinit var omError: (e: Throwable) -> Unit
+    internal lateinit var onProgress: (progress: Int) -> Unit
+
+    internal lateinit var onCompleteWithSuccess: () -> Unit
+    internal lateinit var onCompleteWithError: () -> Unit
+
+    fun onStart(onStart: () -> Unit) {
         this.onStart = onStart
     }
 
-    fun onError(onError: OnError) {
-        this.mOError = onError
+    fun onError(onError: (e: Throwable) -> Unit) {
+        this.omError = onError
     }
 
-    fun onCompleteWithSuccess(onCompleteWithSuccess: OnCompleteWithSuccess) {
+    fun onCompleteWithSuccess(onCompleteWithSuccess: () -> Unit) {
         this.onCompleteWithSuccess = onCompleteWithSuccess
     }
 
-    fun onCompleteWithError(onCompleteWithError: OnCompleteWithError) {
+    fun onCompleteWithError(onCompleteWithError: () -> Unit) {
         this.onCompleteWithError = onCompleteWithError
     }
 
-    fun onProgress(onProgress: OnProgress) {
+    fun onProgress(onProgress: (prog: Int) -> Unit) {
         this.onProgress = onProgress
     }
 
@@ -44,7 +45,7 @@ class ItemsObserver(internal var rxStorage: RxStorage?) : Observer<FileContainer
     override fun onSubscribe(d: Disposable) {
         filesContainer = ArrayList()
         // UI interaction and initialization
-        onStart?.run()
+        onStart?.invoke()
 //        Log.d(TAG, "ItemsObserver onSubscribe")
     }
 
@@ -55,7 +56,7 @@ class ItemsObserver(internal var rxStorage: RxStorage?) : Observer<FileContainer
                 rxStorage?.saveToFile(fileContainer?.bytes, fileContainer?.file) // save file
 //                Log.d(TAG, " First onNext value : " + fileContainer?.file.getName())
                 filesContainer?.add(fileContainer)
-                onProgress?.run(fileContainer.progress)
+                onProgress?.invoke(fileContainer.progress)
             } catch (e: IOException) {
                 onError(IllegalStateException("Can't not save file:" + fileContainer.file.getName()))
             }
@@ -66,17 +67,17 @@ class ItemsObserver(internal var rxStorage: RxStorage?) : Observer<FileContainer
 
     override fun onError(e: Throwable) {
 //        Log.d(TAG, " ItemObserver onError : " + e?.message)
-        this.mOError?.run(e)
+        this.omError?.invoke(e)
     }
 
     fun CompleteWithError() {
-        onCompleteWithError?.run()
+        onCompleteWithError?.invoke()
 //        Log.d(TAG, "Download end-up with error")
         onComplete()
     }
 
     fun CompleteWithSuccess() {
-        onCompleteWithSuccess?.run()
+        onCompleteWithSuccess?.invoke()
 //        Log.d(TAG, "Download Complete with success")
         onComplete()
     }

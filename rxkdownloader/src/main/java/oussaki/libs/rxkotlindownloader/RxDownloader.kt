@@ -36,14 +36,15 @@ class RxDownloader {
     private var itemsObserver: ItemsObserver
     private var rxStorage: RxStorage
     /* Actions */
-    private var onStart: OnStart? = null
-    private var onError: OnError? = null
-    private var onCompleteWithSuccess: OnCompleteWithSuccess? = null
-    private var onCompleteWithError: OnCompleteWithError? = null
-    private var onProgress: OnProgress? = null
+    private lateinit var onStart: () -> Unit
+    private lateinit var onError: (e: Throwable) -> Unit
+    private lateinit var onProgress: (progress: Int) -> Unit
+
+    private lateinit var onCompleteWithSuccess: () -> Unit
+    private lateinit var onCompleteWithError: () -> Unit
     private var files: MutableList<FileContainer>
 
-    fun OnProgress(predicate: (progress: Int) -> Unit): RxDownloader {
+    fun OnProgressx(predicate: (progress: Int) -> Unit): RxDownloader {
         return this
     }
 
@@ -66,7 +67,7 @@ class RxDownloader {
      * @param action
      * @return RxDownloader
      */
-    fun doOnEachSingleError(action: OnError): RxDownloader {
+    fun doOnEachSingleError(action: (e: Throwable) -> Unit): RxDownloader {
         this.onError = action
         this.itemsObserver.onError(action)
         return this
@@ -78,7 +79,7 @@ class RxDownloader {
      * @param action
      * @return RxDownloader
      */
-    fun doOnStart(action: OnStart): RxDownloader {
+    fun doOnStart(action: () -> Unit): RxDownloader {
         this.onStart = action
         this.itemsObserver.onStart(action)
         return this
@@ -90,7 +91,7 @@ class RxDownloader {
      * @param action
      * @return RxDownloader
      */
-    fun doOnCompleteWithSuccess(action: OnCompleteWithSuccess): RxDownloader {
+    fun doOnCompleteWithSuccess(action: () -> Unit): RxDownloader {
         this.onCompleteWithSuccess = action
         this.itemsObserver.onCompleteWithSuccess(action)
         return this
@@ -102,7 +103,7 @@ class RxDownloader {
      * @param action
      * @return RxDownloader
      */
-    fun doOnCompleteWithError(action: OnCompleteWithError): RxDownloader {
+    fun doOnCompleteWithError(action: () -> Unit): RxDownloader {
         this.onCompleteWithError = action
         this.itemsObserver.onCompleteWithError(action)
         return this
@@ -115,7 +116,7 @@ class RxDownloader {
      * @param action
      * @return RxDownloader
      */
-    fun doOnProgress(action: OnProgress): RxDownloader {
+    fun doOnProgress(action: (progress: Int) -> Unit): RxDownloader {
         this.onProgress = action
         this.itemsObserver.onProgress(action)
         return this

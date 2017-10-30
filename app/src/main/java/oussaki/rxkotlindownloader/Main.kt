@@ -1,6 +1,5 @@
 package oussaki.rxkotlindownloader
 
-import android.icu.util.TimeUnit
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -8,8 +7,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.TextView
-import okhttp3.OkHttpClient
-import oussaki.libs.rxkotlindownloader.*
+import oussaki.libs.rxkotlindownloader.RxDownloader
 
 class Main : AppCompatActivity() {
     lateinit var rxDownloader: RxDownloader;
@@ -40,36 +38,26 @@ class Main : AppCompatActivity() {
     }
 
     fun example2() {
+//        LifecycleObser
         RxDownloader
                 .Builder(applicationContext)
                 .addFile("http://reactivex.io/assets/Rx_Logo_S.png")
                 .build()
-                .OnProgress { progress ->  progressBar.progress = progress }
-                .doOnProgress(action = object : OnProgress {
-                    override fun run(progress: Int) {
+                .doOnProgress({ progress ->
+                    // do something useful here
+                })
+                .doOnStart({
+                    // do something useful here
+                })
+                .doOnEachSingleError({ e: Throwable ->
+                    // do something useful here also:D
 
-                    }
                 })
-                .doOnStart(action = object : OnStart {
-                    override fun run() {
-                        // do something useful here
-                    }
-                })
-                .doOnEachSingleError(action = object : OnError {
-                    override fun run(e: Throwable) {
-                        // do something useful here also :D
+                .doOnCompleteWithError({
 
-                    }
                 })
-                .doOnCompleteWithError(action = object : OnCompleteWithError {
-                    override fun run() {
-                        // TODO("not implemented")
-                    }
-                })
-                .doOnCompleteWithSuccess(action = object : OnCompleteWithSuccess {
-                    override fun run() {
-                        txtStatus.text = "Downloading ended successfully"
-                    }
+                .doOnCompleteWithSuccess({
+
                 })
                 .asList()
                 .subscribe({ files, error ->
